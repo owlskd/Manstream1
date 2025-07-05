@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wireframe Karoseri</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Hero Section -->
+  <section class="hero">
+    <img src="images/krs1.png" alt="Hero" class="hero-img">
+    <a class="hero-btn" href="#produk">SHOP NOW</a>
+  </section>
+
+  <!-- Karoseri Carousel Section -->
+  <section class="karoseri-section">
+    <div class="carousel-bg">
+      <img src="images/1bg.png" alt="Overlay Background" class="carousel-overlay-img">
+    </div>
+    <div class="carousel-wrapper">
+      <div class="carousel">
+        <div class="carousel-slide active">
+          <img src="images/krs1.png" alt="Karoseri Slide 1">
+        </div>
+        <div class="carousel-slide">
+          <img src="images/krs2.png" alt="Karoseri Slide 2">
+        </div>
+        <div class="carousel-slide">
+          <img src="images/krs3.png" alt="Karoseri Slide 3">
+        </div>
+        <div class="carousel-slide">
+          <img src="images/karo4.png" alt="Karoseri Slide 4">
+        </div>
+      </div>
+      <div class="carousel-nav">
+        <a href="#" data-slide="0"></a>
+        <a href="#" data-slide="1"></a>
+        <a href="#" data-slide="2"></a>
+        <a href="#" data-slide="3"></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Produk Section -->
+  <section class="produk-section">
+    <div class="produk-grid">
+      <div class="produk-item">
+        <img src="https://via.placeholder.com/200x200?text=Produk+1" alt="Produk 1">
+        <p>Karoseri Produk 1</p>
+      </div>
+      <div class="produk-item">
+        <img src="https://via.placeholder.com/200x200?text=Produk+2" alt="Produk 2">
+        <p>Karoseri Produk 2</p>
+      </div>
+      <div class="produk-item">
+        <img src="https://via.placeholder.com/200x200?text=Produk+3" alt="Produk 3">
+        <p>Karoseri Produk 3</p>
+      </div>
+      <div class="produk-item">
+        <img src="https://via.placeholder.com/200x200?text=Produk+4" alt="Produk 4">
+        <p>Karoseri Produk 4</p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+  // Carousel logic: swipe/drag, dot nav, autoplay
+  const slides = document.querySelectorAll('.carousel-slide');
+  const navDots = document.querySelectorAll('.carousel-nav a');
+  const carousel = document.querySelector('.carousel');
+  let current = 0;
+  let startX = 0;
+  let isDragging = false;
+  let deltaX = 0;
+  let autoplayInterval = null;
+
+  function showSlide(idx) {
+    slides.forEach((slide, i) => {
+      slide.classList.toggle('active', i === idx);
+    });
+    navDots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === idx);
+    });
+    current = idx;
+  }
+
+  function nextSlide() {
+    let idx = (current + 1) % slides.length;
+    showSlide(idx);
+  }
+  function prevSlide() {
+    let idx = (current - 1 + slides.length) % slides.length;
+    showSlide(idx);
+  }
+
+  navDots.forEach((dot, i) => {
+    dot.addEventListener('click', e => {
+      e.preventDefault();
+      showSlide(i);
+      resetAutoplay();
+    });
+  });
+
+  // Swipe/drag support
+  function onDragStart(e) {
+    isDragging = true;
+    startX = e.type.startsWith('touch') ? e.touches[0].clientX : e.clientX;
+    deltaX = 0;
+  }
+  function onDragMove(e) {
+    if (!isDragging) return;
+    const x = e.type.startsWith('touch') ? e.touches[0].clientX : e.clientX;
+    deltaX = x - startX;
+  }
+  function onDragEnd() {
+    if (!isDragging) return;
+    if (deltaX > 50) {
+      prevSlide();
+      resetAutoplay();
+    } else if (deltaX < -50) {
+      nextSlide();
+      resetAutoplay();
+    }
+    isDragging = false;
+    deltaX = 0;
+  }
+  if (carousel) {
+    carousel.addEventListener('mousedown', onDragStart);
+    carousel.addEventListener('mousemove', onDragMove);
+    carousel.addEventListener('mouseup', onDragEnd);
+    carousel.addEventListener('mouseleave', onDragEnd);
+    carousel.addEventListener('touchstart', onDragStart);
+    carousel.addEventListener('touchmove', onDragMove);
+    carousel.addEventListener('touchend', onDragEnd);
+  }
+
+  function startAutoplay() {
+    autoplayInterval = setInterval(nextSlide, 4000);
+  }
+  function resetAutoplay() {
+    clearInterval(autoplayInterval);
+    startAutoplay();
+  }
+
+  // Init
+  showSlide(0);
+  startAutoplay();
+  </script>
+</body>
+</html> 

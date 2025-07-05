@@ -63,5 +63,89 @@
       </div>
     </div>
   </section>
+
+  <script>
+  // Carousel logic: swipe/drag, dot nav, autoplay
+  const slides = document.querySelectorAll('.carousel-slide');
+  const navDots = document.querySelectorAll('.carousel-nav a');
+  const carousel = document.querySelector('.carousel');
+  let current = 0;
+  let startX = 0;
+  let isDragging = false;
+  let deltaX = 0;
+  let autoplayInterval = null;
+
+  function showSlide(idx) {
+    slides.forEach((slide, i) => {
+      slide.classList.toggle('active', i === idx);
+    });
+    navDots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === idx);
+    });
+    current = idx;
+  }
+
+  function nextSlide() {
+    let idx = (current + 1) % slides.length;
+    showSlide(idx);
+  }
+  function prevSlide() {
+    let idx = (current - 1 + slides.length) % slides.length;
+    showSlide(idx);
+  }
+
+  navDots.forEach((dot, i) => {
+    dot.addEventListener('click', e => {
+      e.preventDefault();
+      showSlide(i);
+      resetAutoplay();
+    });
+  });
+
+  // Swipe/drag support
+  function onDragStart(e) {
+    isDragging = true;
+    startX = e.type.startsWith('touch') ? e.touches[0].clientX : e.clientX;
+    deltaX = 0;
+  }
+  function onDragMove(e) {
+    if (!isDragging) return;
+    const x = e.type.startsWith('touch') ? e.touches[0].clientX : e.clientX;
+    deltaX = x - startX;
+  }
+  function onDragEnd() {
+    if (!isDragging) return;
+    if (deltaX > 50) {
+      prevSlide();
+      resetAutoplay();
+    } else if (deltaX < -50) {
+      nextSlide();
+      resetAutoplay();
+    }
+    isDragging = false;
+    deltaX = 0;
+  }
+  if (carousel) {
+    carousel.addEventListener('mousedown', onDragStart);
+    carousel.addEventListener('mousemove', onDragMove);
+    carousel.addEventListener('mouseup', onDragEnd);
+    carousel.addEventListener('mouseleave', onDragEnd);
+    carousel.addEventListener('touchstart', onDragStart);
+    carousel.addEventListener('touchmove', onDragMove);
+    carousel.addEventListener('touchend', onDragEnd);
+  }
+
+  function startAutoplay() {
+    autoplayInterval = setInterval(nextSlide, 4000);
+  }
+  function resetAutoplay() {
+    clearInterval(autoplayInterval);
+    startAutoplay();
+  }
+
+  // Init
+  showSlide(0);
+  startAutoplay();
+  </script>
 </body>
 </html> 
